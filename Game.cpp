@@ -1,40 +1,53 @@
 #include "Game.h"
-
+#include <iostream>
 
 
 Game::Game() {
-	mWindow = nullptr;
 	mIsRunning = true;
-	
+	player = nullptr;
 }
 
 bool Game::Initialize() {
-	mWindow = new RenderWindow(VideoMode(800, 800), "SpaceShooter");
-	if (!mWindow) {
+	mWindow.create(VideoMode(800, 800), "SpaceShooter");
+	w_size = mWindow.getSize();
+
+	Texture tex;
+	tex.loadFromFile("player.png");
+	
+	player = new Player(Vector2f(200, 200), tex);
+	
+	if (!player) {
+
 		return false;
 	}
+	else return true;
 }
 
 void Game::Runloop() {
+	
 	while (mIsRunning) {
+		elapsedTime = clock.restart();
 		//Run game loop
 		ProcessInput();
-		UpdateGame();
+		UpdateGame(elapsedTime);
 		GenerateOutput();	
-	}	
+	}
 }
 
 void Game::ShutDown() {
 	//Shutdown on key press
-	mWindow->~RenderWindow();
+	mWindow.~RenderWindow();
+	player = nullptr;
+	delete player;
 }
 
 void Game::ProcessInput() {
 	Event event;
 	
-	while (mWindow->pollEvent(event)) {
+	while (mWindow.pollEvent(event)) {
+		
 		switch (event.type) {
-
+			
 			case Event::KeyPressed:
 				switch (event.key.code) {
 
@@ -49,20 +62,32 @@ void Game::ProcessInput() {
 	}	
 }
 
-void Game::UpdateGame() {
+void Game::UpdateGame(Time& elapsedTime) {
+	std::cout << elapsedTime.asMilliseconds();
+	std::cout << "here";
+	/*while (!(elapsedTime.asMilliseconds() >= 16))
+	{
+		;
+	}*/
+	
+	float deltaTime = elapsedTime.asSeconds();
+
+	if (deltaTime > 0.05f) {
+		deltaTime = 0.05f;
+	}
 
 }
 
 void Game::GenerateOutput(){
 
-		//Vector2u w_size = mWindow.getSize();
-		float w_width = 800;
-		float w_height = 800;
+		float w_width = w_size.x;
+		float w_height = w_size.y;
 
 		RectangleShape c_background(Vector2f(w_width, w_height));
-		c_background.setFillColor(Color::Color(0, 0, 0, 0));
+		c_background.setFillColor(Color::Color(0, 100, 0, 100));
 
-		mWindow->clear();
-		mWindow->draw(c_background);
-		mWindow->display();
+		mWindow.clear();
+		mWindow.draw(c_background);
+		player->draw(mWindow);
+		mWindow.display();
 }
