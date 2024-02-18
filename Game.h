@@ -11,8 +11,6 @@ private:
 	void GenerateOutput();
 
 	RenderWindow* mWindow;
-	Event mEvent;
-
 
 public:
 	Game();
