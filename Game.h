@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Player.h"
+#include "Character.h"
 
 using namespace sf;
 
@@ -18,7 +18,7 @@ private:
 	RenderWindow mWindow;
 	Time elapsedTime;
 	Clock clock;
-	Player* player;
+	Character* player;
 	
 
 public:

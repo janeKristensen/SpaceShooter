@@ -13,9 +13,9 @@ bool Game::Initialize() {
 
 	Texture tex;
 	tex.loadFromFile("player.png");
-	
-	player = new Player(Vector2f(200, 200), tex);
-	
+
+	player = new Character(Vector2f(200, 200), tex);
+
 	if (!player) {
 
 		return false;
@@ -24,13 +24,13 @@ bool Game::Initialize() {
 }
 
 void Game::Runloop() {
-	
+
 	while (mIsRunning) {
 		elapsedTime = clock.restart();
 		//Run game loop
 		ProcessInput();
 		UpdateGame(elapsedTime);
-		GenerateOutput();	
+		GenerateOutput();
 	}
 }
 
@@ -43,39 +43,55 @@ void Game::ShutDown() {
 
 void Game::ProcessInput() {
 	Event event;
-	
-	while (mWindow.pollEvent(event)) {
-		
-		switch (event.type) {
-			
-			case Event::KeyPressed:
-				switch (event.key.code) {
 
-					case Keyboard::Escape:
-						mIsRunning = false;
-						break;
-				}
-			case Event::Closed:
+	while (mWindow.pollEvent(event)) {
+
+		if (event.type == Event::KeyPressed) {
+
+			switch (event.key.code) {
+			case Keyboard::Escape:
 				mIsRunning = false;
 				break;
+			case Keyboard::A:
+				player->updateVelocity(Vector2f(-1, 0));
+				break;
+			case Keyboard::D:
+				player->updateVelocity(Vector2f(1, 0));
+				break;
+			case Keyboard::W:
+				player->updateVelocity(Vector2f(0, -1));
+				break;
+			case Keyboard::S:
+				player->updateVelocity(Vector2f(0, 1));
+				break;
+			}
 		}
-	}	
+		else if (event.type == Event::Closed) {
+			mIsRunning = false;
+			break;
+		}
+	}
 }
 
 void Game::UpdateGame(Time& elapsedTime) {
-	std::cout << elapsedTime.asMilliseconds();
-	std::cout << "here";
+
 	/*while (!(elapsedTime.asMilliseconds() >= 16))
 	{
 		;
 	}*/
-	
+
 	float deltaTime = elapsedTime.asSeconds();
 
 	if (deltaTime > 0.05f) {
 		deltaTime = 0.05f;
 	}
 
+	if (player->getVelocity() != Vector2f(0, 0)) {
+		Vector2u win_pos = mWindow.getSize();
+		player->updatePosition(deltaTime, win_pos);
+
+		
+	}
 }
 
 void Game::GenerateOutput(){

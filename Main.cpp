@@ -11,7 +11,7 @@ int main(){
 	if (success) {
 		game.Runloop();
 	}
+
 	game.ShutDown();
 	return 0;
-
 }
